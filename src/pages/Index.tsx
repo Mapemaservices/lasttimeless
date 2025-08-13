@@ -27,8 +27,9 @@ import {
 } from "lucide-react";
 
 const Index = () => {
-  const { data: featuredProducts } = useFeaturedProducts();
+  const { data: featuredProducts, isLoading: isFeaturedLoading } = useFeaturedProducts();
   const { data: categories } = useProductCategories();
+  const [activeCategory, setActiveCategory] = useState<string>('all');
   const { data: settings } = useWebsiteSettings();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const navigate = useNavigate();
@@ -75,24 +76,83 @@ const Index = () => {
     </div>
   </section>
 
+      {/* Super Styled Promotions Banner */}
+      <div className="w-full flex justify-center mb-12 animate-fade-in-up">
+        <div className="relative bg-gradient-to-br from-[#ffb700] via-[#ff4e00] to-[#ff007a] text-white rounded-3xl shadow-2xl px-10 py-8 flex flex-col items-center max-w-3xl border-4 border-white/30 z-30" style={{ transform: 'translateY(-40px)', boxShadow: '0 16px 48px 0 rgba(0,0,0,0.25), 0 1.5px 8px 0 rgba(255,78,0,0.15)' }}>
+          <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-[#ff4e00] font-black text-lg px-6 py-2 rounded-full shadow-lg border-2 border-[#ffb700] animate-bounce">🔥 LIMITED TIME DEAL</div>
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-xl tracking-tight">Flash Sale: 30% OFF</h2>
+          <p className="text-lg md:text-2xl font-semibold mb-4 max-w-xl text-white/90">Get the best deals on our premium wigs. New arrivals and best sellers included. Don't miss out!</p>
+          <div className="flex gap-4 mb-4">
+            <button
+              className="bg-white/20 px-4 py-2 rounded-full font-bold text-lg tracking-wide shadow hover:bg-white/40 transition"
+              onClick={() => navigate('/shop')}
+            >
+              Today Only
+            </button>
+            <button
+              className="bg-white/20 px-4 py-2 rounded-full font-bold text-lg tracking-wide shadow hover:bg-white/40 transition"
+              onClick={() => navigate('/shop')}
+            >
+              Free Shipping
+            </button>
+          </div>
+          <button
+            className="mt-2 px-8 py-4 bg-white text-[#ff4e00] font-bold text-xl rounded-full shadow-lg hover:bg-[#ffb700] hover:text-white transition-all duration-200"
+            onClick={() => navigate('/shop')}
+          >
+            Shop Flash Deals
+          </button>
+        </div>
+      </div>
       {/* Featured Products - superstyled */}
       <section className="py-20 animate-fade-in-up">
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
-            <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-primary animate-fade-in-up">Featured Products</h2>
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-2 text-primary animate-fade-in-up">Featured Products</h2>
+            <div className="w-16 h-1 bg-accent rounded-full mb-4"></div>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-in-up delay-100">
               Hand-picked premium wigs that our customers love most
             </p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-10">
-            {featuredProducts?.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onViewDetails={() => setSelectedProduct(product)}
-                onAddToCart={() => setSelectedProduct(product)}
-              />
+          {/* Quick Category Filter Chips */}
+          <div className="flex flex-wrap justify-center gap-2 mb-8">
+            <button
+              className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-primary/50 ${activeCategory === 'all' ? 'bg-primary text-white border-primary' : 'bg-white text-primary border-primary/30'} md:px-6 md:py-3 md:text-base`}
+              onClick={() => setActiveCategory('all')}
+              aria-label="Show all categories"
+            >
+              All
+            </button>
+            {categories?.map(category => (
+              <button
+                key={category}
+                className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-primary/50 ${activeCategory === category ? 'bg-primary text-white border-primary' : 'bg-white text-primary border-primary/30'} md:px-6 md:py-3 md:text-base`}
+                onClick={() => setActiveCategory(category)}
+                aria-label={`Filter by ${category}`}
+              >
+                {category}
+              </button>
             ))}
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-10">
+            {isFeaturedLoading
+              ? Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="w-40 md:w-52 h-64 flex flex-col gap-2 animate-pulse" aria-busy="true" aria-label="Loading product">
+                    <div className="bg-muted rounded-md h-40 md:h-52 w-full" />
+                    <div className="bg-muted rounded-md h-6 w-3/4 mx-auto" />
+                    <div className="bg-muted rounded-md h-4 w-1/2 mx-auto" />
+                  </div>
+                ))
+              : featuredProducts
+                  ?.filter(product => activeCategory === 'all' || product.category === activeCategory)
+                  .map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      onViewDetails={() => setSelectedProduct(product)}
+                      onAddToCart={() => setSelectedProduct(product)}
+                    />
+                  ))}
           </div>
           <div className="text-center">
             <Button variant="cta" size="xl" className="text-lg px-10 py-6" onClick={() => navigate('/shop')}>
@@ -117,7 +177,8 @@ const Index = () => {
       <section className="py-20 animate-fade-in-up">
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
-            <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-primary animate-fade-in-up">Delivery & Payment</h2>
+              <h2 className="text-4xl md:text-5xl font-extrabold mb-2 text-primary animate-fade-in-up">Delivery & Payment</h2>
+              <div className="w-16 h-1 bg-accent rounded-full mb-4"></div>
             <p className="text-xl text-muted-foreground animate-fade-in-up">
               Fast, reliable delivery across Kenya with secure payment options
             </p>

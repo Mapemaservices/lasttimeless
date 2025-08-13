@@ -38,6 +38,13 @@ export function Navigation() {
     { name: "Track Order", href: "/track" },
   ];
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/shop?search=${encodeURIComponent(searchTerm.trim())}`);
+    }
+  };
   return (
     <nav className="fixed top-0 left-0 w-full z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 text-[20px] md:text-[18px] lg:text-[20px]">
       <div className="container mx-auto px-2 sm:px-4">
@@ -80,13 +87,20 @@ export function Navigation() {
             </div>
           </div>
           {/* Search Bar */}
-          <div className="flex items-center space-x-4">
-            <input type="text" placeholder="Search" className="w-full max-w-md px-4 py-2 rounded border border-border text-lg" />
-            <Button variant="ghost" size="icon" className="ml-2">
+          <form className="flex items-center space-x-4" onSubmit={handleSearch}>
+            <input
+              type="text"
+              placeholder="Search"
+              className="w-full max-w-md px-4 py-2 rounded border border-border text-lg"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              aria-label="Search products"
+            />
+            <Button variant="ghost" size="icon" className="ml-2" type="submit" aria-label="Search">
               <Search className="h-6 w-6" />
             </Button>
             <CartDrawer onCheckout={() => navigate('/checkout')} />
-          </div>
+          </form>
         </div>
       </div>
     </nav>

@@ -17,8 +17,18 @@ export function ProductCard({ product, onViewDetails, onAddToCart }: ProductCard
   const priceDisplay = minPrice === maxPrice ? `KSh ${minPrice.toLocaleString()}` : `KSh ${minPrice.toLocaleString()} - ${maxPrice.toLocaleString()}`;
 
   return (
-    <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105 w-40 md:w-52">
-      <div className="relative overflow-hidden w-full h-40 md:h-52">
+    <Card
+      className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105 w-36 md:w-52 animate-fade-in-up p-1 md:p-0"
+      tabIndex={0}
+      aria-label={`View details for ${product.name}`}
+      role="button"
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          onViewDetails?.(product);
+        }
+      }}
+    >
+  <div className="relative overflow-hidden w-full h-32 md:h-52">
         {firstImage ? (
           <img
             src={firstImage}
@@ -27,8 +37,8 @@ export function ProductCard({ product, onViewDetails, onAddToCart }: ProductCard
             className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="w-full h-full bg-muted flex items-center justify-center">
-            <span className="text-muted-foreground text-xs">No Image</span>
+          <div className="absolute inset-0 w-full h-full bg-muted flex items-center justify-center text-muted-foreground">
+            <Eye className="h-10 w-10" aria-label="No image available" />
           </div>
         )}
         {product.is_featured && (
@@ -37,22 +47,24 @@ export function ProductCard({ product, onViewDetails, onAddToCart }: ProductCard
           </Badge>
         )}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-          <div className="flex gap-1">
+          <div className="flex gap-2 md:gap-1">
             <Button
               size="icon"
               variant="secondary"
-              className="h-5 w-5"
+              className="h-8 w-8 md:h-5 md:w-5"
+              aria-label={`View details for ${product.name}`}
               onClick={() => onViewDetails?.(product)}
             >
-              <Eye className="h-3 w-3" />
+              <Eye className="h-4 w-4 md:h-3 md:w-3" />
             </Button>
             <Button
               size="icon"
               variant="secondary"
-              className="h-5 w-5"
+              className="h-8 w-8 md:h-5 md:w-5"
+              aria-label={`Add ${product.name} to cart`}
               onClick={() => onAddToCart?.(product)}
             >
-              <ShoppingCart className="h-3 w-3" />
+              <ShoppingCart className="h-4 w-4 md:h-3 md:w-3" />
             </Button>
           </div>
         </div>
