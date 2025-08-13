@@ -57,35 +57,23 @@ const Index = () => {
         <Hero />
       </section>
 
-      {/* Categories Section - superstyled */}
-      <section className="py-20 bg-gradient-to-br from-[#fff0f7] to-[#f0f7ff] animate-fade-in-up">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-14">
-            <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-primary animate-fade-in-up">Browse Categories</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-in-up delay-100">
-              Discover our wide range of premium wigs for every style and occasion
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            {categories?.slice(0, 12).map((category, index) => (
-              <Card key={category} className="group hover:shadow-2xl transition-all duration-300 hover:scale-110 cursor-pointer bg-white/80 animate-fade-in-up">
-                <CardContent className="p-8 text-center">
-                  <div className="text-5xl mb-4 animate-bounce-slow">{categoryIcons[category as keyof typeof categoryIcons] || '💇‍♀️'}</div>
-                  <h3 className="font-bold text-lg group-hover:text-secondary transition-colors animate-fade-in-up">
-                    {category}
-                  </h3>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <Button variant="outline" size="xl" className="text-lg px-8 py-4 animate-fade-in-up" onClick={() => navigate('/categories')}>
-              View All Categories
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </div>
-        </div>
-      </section>
+
+  {/* Categories Section - shows available categories from database */}
+  <section className="py-10 animate-fade-in-up">
+    <div className="container mx-auto px-4">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl md:text-4xl font-bold mb-2 text-primary">Shop by Category</h2>
+        <p className="text-lg text-muted-foreground">Browse our available categories</p>
+      </div>
+      <div className="flex flex-wrap justify-center gap-4">
+        {categories?.map(category => (
+          <Button key={category} variant="outline" size="lg" className="text-base px-6 py-3" onClick={() => navigate(`/categories/${category}`)}>
+            {categoryIcons[category as keyof typeof categoryIcons] || '💇‍♀️'} {category}
+          </Button>
+        ))}
+      </div>
+    </div>
+  </section>
 
       {/* Featured Products - superstyled */}
       <section className="py-20 animate-fade-in-up">
@@ -116,48 +104,11 @@ const Index = () => {
       </section>
 
       {/* About Section - superstyled */}
-      <section className="py-20 bg-gradient-to-br from-[#f0f7ff] to-[#fff0f7] animate-fade-in-up">
+  <section className="py-0 bg-gradient-to-br from-[#f0f7ff] to-[#fff0f7] animate-fade-in-up">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="text-4xl md:text-5xl font-extrabold mb-8 text-primary animate-fade-in-up">About Timeless Strands</h2>
-              <p className="text-xl text-muted-foreground mb-8 animate-fade-in-up">
-                {settings?.about_text || "Timeless Strands is Kenya's premier wig retailer, offering high-quality wigs for every style and occasion."}
-              </p>
-              <div className="grid grid-cols-2 gap-6 mb-8">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-secondary/30 flex items-center justify-center animate-pulse">
-                    <Award className="h-6 w-6 text-secondary" />
-                  </div>
-                  <div>
-                    <div className="font-bold">Premium Quality</div>
-                    <div className="text-base text-muted-foreground">100% authentic wigs</div>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-secondary/30 flex items-center justify-center animate-pulse">
-                    <Users className="h-6 w-6 text-secondary" />
-                  </div>
-                  <div>
-                    <div className="font-bold">Expert Support</div>
-                    <div className="text-base text-muted-foreground">Professional guidance</div>
-                  </div>
-                </div>
-              </div>
-              <Button variant="outline" size="xl" className="text-lg px-8 py-4 animate-fade-in-up">
-                Learn More About Us
-              </Button>
-            </div>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-6">
-                <div className="aspect-square bg-gradient-to-br from-secondary/30 to-accent/30 rounded-lg animate-fade-in"></div>
-                <div className="aspect-[4/3] bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg animate-fade-in"></div>
-              </div>
-              <div className="space-y-6 pt-10">
-                <div className="aspect-[4/3] bg-gradient-to-br from-accent/30 to-primary/20 rounded-lg animate-fade-in"></div>
-                <div className="aspect-square bg-gradient-to-br from-secondary/20 to-accent/30 rounded-lg animate-fade-in"></div>
-              </div>
-            </div>
+            {/* About section removed as requested */}
+            {/* Removed empty space cards as requested */}
           </div>
         </div>
       </section>

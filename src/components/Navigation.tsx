@@ -1,84 +1,91 @@
 import logo from "@/assets/logo.png";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { CartDrawer } from "@/components/CartDrawer";
-import { Menu, Search, User } from "lucide-react";
+import { Menu, Search, User, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useProductCategories } from "@/hooks/useProducts";
 
 export function Navigation() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const categoriesRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (categoriesRef.current && !categoriesRef.current.contains(event.target as Node)) {
+        setCategoriesOpen(false);
+      }
+    }
+    if (categoriesOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [categoriesOpen]);
   const navigate = useNavigate();
+  const { data: categories } = useProductCategories();
 
   const navItems = [
     { name: "Home", href: "/" },
     { name: "Shop", href: "/shop" },
-    { name: "Categories", href: "/categories" },
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
     { name: "Track Order", href: "/track" },
   ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 text-[20px] md:text-[18px] lg:text-[20px]">
+    <nav className="fixed top-0 left-0 w-full z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 text-[20px] md:text-[18px] lg:text-[20px]">
       <div className="container mx-auto px-2 sm:px-4">
         <div className="flex h-20 md:h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <img src={logo} alt="Logo" className="h-10 w-10 md:h-8 md:w-8 rounded" />
-            <span className="text-2xl md:text-2xl font-bold text-foreground">Timeless Strands</span>
+            <img src={logo} alt="Logo" className="h-16 w-16 md:h-14 md:w-14 rounded-xl cursor-pointer" />
           </Link>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className="text-xl font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
+          {/* Navigation Items */}
+          <div className="flex-1 flex items-center justify-center px-4 space-x-6">
+            {navItems.map(item => (
+              <Link key={item.name} to={item.href} className="hover:text-accent font-semibold transition-colors duration-200">
                 {item.name}
               </Link>
             ))}
-          </div>
-
-          {/* Desktop Actions */}
-          <div className="hidden md:flex items-center space-x-4">
-            <CartDrawer onCheckout={() => navigate('/checkout')} />
-          </div>
-
-          {/* Mobile Navigation */}
-          <div className="md:hidden flex items-center space-x-2">
-            <CartDrawer onCheckout={() => navigate('/checkout')} />
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  aria-label="Open navigation menu"
-                  className="border-2 border-primary bg-white shadow-lg md:hidden flex items-center justify-center"
-                  style={{ minWidth: 56, minHeight: 56 }}
-                >
-                  <Menu className="h-12 w-12 text-primary" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[90vw] max-w-sm">
-                <div className="flex flex-col space-y-6 mt-10">
-                  {navItems.map((item) => (
+            {/* Categories Dropdown - click to open */}
+            <div className="relative" ref={categoriesRef}>
+              <button
+                className="flex items-center font-semibold hover:text-accent transition-colors duration-200"
+                onClick={() => setCategoriesOpen((open) => !open)}
+                aria-haspopup="true"
+                aria-expanded={categoriesOpen}
+              >
+                Categories <ChevronDown className="ml-1 h-5 w-5" />
+              </button>
+              {categoriesOpen && (
+                <div className="absolute left-0 top-full mt-2 w-48 bg-white shadow-lg rounded-lg py-2 z-50">
+                  {categories?.map(category => (
                     <Link
-                      key={item.name}
-                      to={item.href}
-                      className="text-3xl font-bold text-foreground hover:text-secondary transition-colors py-4"
-                      style={{ fontSize: 'clamp(2rem, 8vw, 2.8rem)' }}
-                      onClick={() => setIsOpen(false)}
+                      key={category}
+                      to={`/categories/${category}`}
+                      className="block px-4 py-2 hover:bg-accent hover:text-accent-foreground rounded transition-colors duration-150"
+                      onClick={() => setCategoriesOpen(false)}
                     >
-                      {item.name}
+                      {category}
                     </Link>
                   ))}
                 </div>
-              </SheetContent>
-            </Sheet>
+              )}
+            </div>
+          </div>
+          {/* Search Bar */}
+          <div className="flex items-center space-x-4">
+            <input type="text" placeholder="Search" className="w-full max-w-md px-4 py-2 rounded border border-border text-lg" />
+            <Button variant="ghost" size="icon" className="ml-2">
+              <Search className="h-6 w-6" />
+            </Button>
+            <CartDrawer onCheckout={() => navigate('/checkout')} />
           </div>
         </div>
       </div>

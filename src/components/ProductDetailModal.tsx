@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -18,16 +19,18 @@ interface ProductDetailModalProps {
 export function ProductDetailModal({ product, open, onClose }: ProductDetailModalProps) {
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
+  const [currentImageIdx, setCurrentImageIdx] = useState(0);
   const { addToCart } = useCart();
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  if (!product) return null;
-
-  const firstImage = product.product_media?.find(media => media.media_type === 'image')?.media_url;
-  const minPrice = Math.min(...product.product_variants.map(v => v.price));
-  const maxPrice = Math.max(...product.product_variants.map(v => v.price));
+  // Always call hooks before any return
+  const images = product?.product_media?.filter(media => media.media_type === 'image').map(media => media.media_url) || [];
+  const minPrice = product ? Math.min(...product.product_variants.map(v => v.price)) : 0;
+  const maxPrice = product ? Math.max(...product.product_variants.map(v => v.price)) : 0;
   const priceDisplay = minPrice === maxPrice ? `KSh ${minPrice.toLocaleString()}` : `KSh ${minPrice.toLocaleString()} - ${maxPrice.toLocaleString()}`;
+
+  if (!product) return null;
 
   const handleAddToCart = () => {
     if (!selectedVariant) {
@@ -69,14 +72,35 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
         </DialogHeader>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Product Image */}
-          <div className="aspect-square overflow-hidden rounded-lg bg-muted">
-            {firstImage ? (
-              <img
-                src={firstImage}
-                alt={product.name}
-                className="w-full h-full object-cover"
-              />
+          {/* Product Image Carousel */}
+          <div className="aspect-square overflow-hidden rounded-lg bg-muted flex flex-col items-center justify-center relative">
+            {images.length > 0 ? (
+              <>
+                <img
+                  src={images[currentImageIdx]}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+                {images.length > 1 && (
+                  <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+                    <button
+                      className="bg-white/80 rounded-full px-2 py-1 text-lg font-bold shadow"
+                      onClick={() => setCurrentImageIdx((idx) => (idx === 0 ? images.length - 1 : idx - 1))}
+                      aria-label="Previous image"
+                    >
+                      &#8592;
+                    </button>
+                    <span className="px-2 text-sm text-muted-foreground">{currentImageIdx + 1} / {images.length}</span>
+                    <button
+                      className="bg-white/80 rounded-full px-2 py-1 text-lg font-bold shadow"
+                      onClick={() => setCurrentImageIdx((idx) => (idx === images.length - 1 ? 0 : idx + 1))}
+                      aria-label="Next image"
+                    >
+                      &#8594;
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <span className="text-muted-foreground">No Image Available</span>

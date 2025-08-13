@@ -1,16 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&display=swap');
+
 @layer base {
   body {
-    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    font-family: 'Inter', 'Roboto', 'Open Sans', 'Segoe UI', Arial, sans-serif;
     color: hsl(var(--foreground));
     background: hsl(var(--background));
     letter-spacing: 0.01em;
     line-height: 1.6;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    font-family: 'Inter', 'Roboto', 'Open Sans', 'Segoe UI', Arial, sans-serif;
     font-weight: 700;
     color: hsl(var(--primary));
     margin-bottom: 0.5em;
+    letter-spacing: 0.02em;
   }
   .container {
     max-width: 1200px;
@@ -21,11 +24,27 @@
   }
 }
 @layer components {
-  .btn, .button, button, a {
-    @apply px-6 py-3 text-lg rounded-lg;
+  .btn, .button, button {
+    @apply px-6 py-3 text-lg rounded-lg font-semibold transition-colors duration-200;
+    background: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+    border: none;
+    box-shadow: var(--shadow-card);
+  }
+  .btn:hover, .button:hover, button:hover {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+  a {
+    color: hsl(var(--primary));
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  a:hover {
+    color: hsl(var(--accent));
   }
   @media (max-width: 768px) {
-    .btn, .button, button, a {
+    .btn, .button, button {
       @apply px-8 py-4 text-2xl rounded-xl;
     }
   }

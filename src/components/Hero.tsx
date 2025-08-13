@@ -39,7 +39,7 @@ export function Hero() {
       <div className="relative z-10 w-full flex flex-col items-center justify-center text-center px-4 py-12">
         {/* Top Badge */}
         <div className="max-w-4xl w-full flex flex-col items-center gap-6">
-          <span className="inline-block bg-secondary/90 text-primary font-bold uppercase tracking-widest rounded-full px-6 py-2 text-xs md:text-sm shadow-lg mb-2 mt-2 md:mt-0">#1 Premium Wigs in Kenya</span>
+          {/* Removed '#1 Premium Wigs in Kenya' badge */}
 
           {/* Main Headline */}
           <h1 className="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg leading-tight mb-2">
